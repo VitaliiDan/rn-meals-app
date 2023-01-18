@@ -1,18 +1,19 @@
 import { Pressable, Text, View, StyleSheet, Platform } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { projectShadow } from "../consts/css/projectShadow";
 
-export const CategoryCard = ( {title, color, categoryId} ) => {
+export const CategoryCard = ( { title, color, categoryId } ) => {
 	const navigation = useNavigation();
-	const onPressHandler = () => navigation.navigate( 'MealsOverview', {categoryId} );
+	const onPressHandler = () => navigation.navigate( 'MealsOverview', { categoryId } );
 
 	return (
 		<View style={ styles.gridItem }>
 			<Pressable
-				android_ripple={ {color: '#ccc'} }
-				style={ ( {pressed} ) => [ styles.button, pressed ? styles.buttonPressed : null ] }
+				android_ripple={ { color: '#ccc' } }
+				style={ ( { pressed } ) => [ styles.button, pressed ? styles.buttonPressed : null ] }
 				onPress={ onPressHandler }
 			>
-				<View style={ [ styles.innerContainer, {backgroundColor: color} ] }>
+				<View style={ [ styles.innerContainer, { backgroundColor: color } ] }>
 					<Text style={ styles.title }>{ title }</Text>
 				</View>
 			</Pressable>
@@ -26,13 +27,8 @@ const styles = StyleSheet.create( {
 		margin: 16,
 		height: 150,
 		borderRadius: 8,
-		elevation: 4,
 		backgroundColor: '#fff',
-		shadowColor: 'black',
-		shadowOpacity: 0.5,
-		shadowOffset: {width: 0, height: 2},
-		shadowRadius: 8,
-		overflow: Platform.OS === "android" ? 'hidden' : 'visible',
+		...projectShadow,
 	},
 	button: {
 		flex: 1,
