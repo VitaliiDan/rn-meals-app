@@ -1,7 +1,12 @@
-import { FavoritesContext } from "../store/context/favorites-context";
-import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useLayoutEffect } from "react";
+
+import { useDispatch, useSelector } from "react-redux";
+import { addFavorite, removeFavorite } from "../store/redux/favorites";
+
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { useContext, useLayoutEffect } from "react";
+
+import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+// import { FavoritesContext } from "../store/context/favorites-context";
 import { MEALS } from "../data/dummy-data";
 import { MealDetails } from "../components/MealDetails";
 import { SubTitle } from "../components/mealDetail/SubTitle";
@@ -9,29 +14,35 @@ import { List } from "../components/mealDetail/List";
 import { IconButton } from "../components/IconButton";
 
 export const MealDetailScreen = () => {
-  const favoriteMealsCtx = useContext( FavoritesContext );
-
+  // const favoriteMealsCtx = useContext( FavoritesContext );
+  const favoriteMealsIds = useSelector( (state) => state.favoriteMeals.ids )
+  const dispatch = useDispatch();
   const route = useRoute();
   const navigation = useNavigation();
   const mealId = route.params.mealId;
   const displayedMeal = MEALS.find( meal => meal.id === mealId )
+  const isFavorite = favoriteMealsIds.includes( mealId )
 
-  const headerButtonPressHandler = () => favoriteMealsCtx.isFavorite( mealId )
-    ? favoriteMealsCtx.removeFavorite( mealId )
-    : favoriteMealsCtx.addFavorite( mealId );
+  const headerButtonPressHandler = () => isFavorite
+    ? dispatch( removeFavorite( {id: mealId} ) )
+    : dispatch( addFavorite( {id: mealId} ) )
+
+  // const headerButtonPressHandler = () => favoriteMealsCtx.isFavorite( mealId )
+  //   ? favoriteMealsCtx.removeFavorite( mealId )
+  //   : favoriteMealsCtx.addFavorite( mealId );
 
   useLayoutEffect( () => {
     navigation.setOptions( {
       title: displayedMeal.title,
       headerRight: () => (
         <IconButton
-          icon='star'
-          color={ favoriteMealsCtx.isFavorite( mealId ) ? 'yellow' : 'white' }
+          icon={ isFavorite ? 'star' : 'star-outline' }
+          color='white'
           onPress={ headerButtonPressHandler }
         />
       )
     } )
-  }, [mealId, navigation, headerButtonPressHandler, favoriteMealsCtx] )
+  }, [mealId, navigation, headerButtonPressHandler, isFavorite] )
 
   return (
     <ScrollView style={ styles.container }>
